@@ -133,10 +133,16 @@ public class ProcessImageActivity extends AppCompatActivity implements View.OnCl
 
         if(command.equals(CommandConstants.OpenCV_EnvTest))
             bitmap = ImageProcessUtils.convert2Gray(bitmap);
-        else if(command.equals(CommandConstants.OpenCV_InvertPixel))
-            bitmap = ImageProcessUtils.InvertMat(bitmap);
+        else if(command.equals(CommandConstants.OpenCV_InvertPixelSlow))
+            bitmap = ImageProcessUtils.InvertMatSlow(bitmap);
+        else if(command.equals(CommandConstants.OpenCV_InvertPixelFast))
+            bitmap = ImageProcessUtils.InvertMatFast(bitmap);
         else if(command.equals(CommandConstants.OpenCV_InvertBitmap))
             bitmap = ImageProcessUtils.InvertBitmap(bitmap);
+        else if(command.equals(CommandConstants.OpenCV_MatSubstract))
+            bitmap = ImageProcessUtils.MatSubstract(bitmap);
+        else if(command.equals(CommandConstants.OpenCV_MatAdd))
+            bitmap = ImageProcessUtils.MatAdd(bitmap);
 
         cost = System.currentTimeMillis() - cost;
         duration.setText(Long.toString(cost));

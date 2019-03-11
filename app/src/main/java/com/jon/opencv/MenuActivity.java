@@ -34,8 +34,11 @@ public class MenuActivity extends AppCompatActivity implements AdapterView.OnIte
         listView.setAdapter(myListViewAdapter);
         listView.setOnItemClickListener(this);
         myListViewAdapter.getMode().add(new CommandData(index++,CommandConstants.OpenCV_EnvTest));
-        myListViewAdapter.getMode().add(new CommandData(index++,CommandConstants.OpenCV_InvertPixel));
+        myListViewAdapter.getMode().add(new CommandData(index++,CommandConstants.OpenCV_InvertPixelSlow));
+        myListViewAdapter.getMode().add(new CommandData(index++,CommandConstants.OpenCV_InvertPixelFast));
         myListViewAdapter.getMode().add(new CommandData(index++,CommandConstants.OpenCV_InvertBitmap));
+        myListViewAdapter.getMode().add(new CommandData(index++,CommandConstants.OpenCV_MatSubstract));
+        myListViewAdapter.getMode().add(new CommandData(index++,CommandConstants.OpenCV_MatAdd));
         myListViewAdapter.notifyDataSetChanged();
 
     }

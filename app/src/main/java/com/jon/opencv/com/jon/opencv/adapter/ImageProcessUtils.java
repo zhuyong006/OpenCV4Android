@@ -4,7 +4,9 @@ import android.graphics.Bitmap;
 import android.util.Log;
 
 import org.opencv.android.Utils;
+import org.opencv.core.Core;
 import org.opencv.core.Mat;
+import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
 /**
@@ -14,8 +16,19 @@ import org.opencv.imgproc.Imgproc;
 public class ImageProcessUtils {
     public static final String TAG = "OpenCV.Jon";
 
-    public static Bitmap InvertMat(Bitmap bitmap){
-        Log.e(TAG,"InvertMat");
+    public static Bitmap convert2Gray(Bitmap bitmap){
+        Log.e(TAG,"convert2Gray");
+        Mat src = new Mat();
+        Mat dst = new Mat();
+        Utils.bitmapToMat(bitmap,src);
+        Imgproc.cvtColor(src, dst, Imgproc.COLOR_BGRA2GRAY);
+        Utils.matToBitmap(dst, bitmap);
+        src.release();
+        dst.release();
+        return bitmap;
+    }
+    public static Bitmap InvertMatSlow(Bitmap bitmap){
+        Log.e(TAG,"InvertMatSlow");
         Mat src = new Mat();
         Utils.bitmapToMat(bitmap,src);
         int width = src.width();
@@ -32,6 +45,15 @@ public class ImageProcessUtils {
                 src.put(h, w, bgra);
             }
         }
+        Utils.matToBitmap(src, bitmap);
+        src.release();
+        return bitmap;
+    }
+    public static Bitmap InvertMatFast(Bitmap bitmap){
+        Log.e(TAG,"InvertMatFast");
+        Mat src = new Mat();
+        Utils.bitmapToMat(bitmap,src);
+        Core.bitwise_not(src,src);
         Utils.matToBitmap(src, bitmap);
         src.release();
         return bitmap;
@@ -63,15 +85,25 @@ public class ImageProcessUtils {
 
         return bitmap;
     }
-    public static Bitmap convert2Gray(Bitmap bitmap){
-        Log.e(TAG,"convert2Gray");
+    public static Bitmap MatSubstract(Bitmap bitmap){
+        Log.e(TAG,"MatSubstract");
         Mat src = new Mat();
-        Mat dst = new Mat();
         Utils.bitmapToMat(bitmap,src);
-        Imgproc.cvtColor(src, dst, Imgproc.COLOR_BGRA2GRAY);
-        Utils.matToBitmap(dst, bitmap);
+        Mat white = new Mat(src.size(),src.type(), Scalar.all(255));
+        Core.subtract(white,src,src);
+        Utils.matToBitmap(src, bitmap);
         src.release();
-        dst.release();
+        return bitmap;
+    }
+    public static Bitmap MatAdd(Bitmap bitmap){
+        Log.e(TAG,"MatAdd");
+        Mat src = new Mat();
+        Utils.bitmapToMat(bitmap,src);
+        Mat white = new Mat(src.size(),src.type(), Scalar.all(255));
+        double weight = 0.5;
+        Core.addWeighted(white,weight,src,1-weight,0,src);
+        Utils.matToBitmap(src, bitmap);
+        src.release();
         return bitmap;
     }
 }
