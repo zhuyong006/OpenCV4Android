@@ -143,6 +143,12 @@ public class ProcessImageActivity extends AppCompatActivity implements View.OnCl
             bitmap = ImageProcessUtils.MatSubstract(bitmap);
         else if(command.equals(CommandConstants.OpenCV_MatAdd))
             bitmap = ImageProcessUtils.MatAdd(bitmap);
+        else if(command.equals(CommandConstants.OpenCV_BrightContrastAdjust))
+            bitmap = ImageProcessUtils.MatBrightContrastAdjust(bitmap);
+        else if(command.equals(CommandConstants.OpenCV_MatDemo))
+            bitmap = ImageProcessUtils.MatDemoUsage(bitmap);
+        else if(command.equals(CommandConstants.OpenCV_GetSubMat))
+            bitmap = ImageProcessUtils.GetRoiArea(bitmap);
 
         cost = System.currentTimeMillis() - cost;
         duration.setText(Long.toString(cost));

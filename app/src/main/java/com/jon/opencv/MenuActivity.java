@@ -1,14 +1,10 @@
 package com.jon.opencv;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.jon.opencv.com.jon.opencv.adapter.CommandData;
@@ -39,6 +35,9 @@ public class MenuActivity extends AppCompatActivity implements AdapterView.OnIte
         myListViewAdapter.getMode().add(new CommandData(index++,CommandConstants.OpenCV_InvertBitmap));
         myListViewAdapter.getMode().add(new CommandData(index++,CommandConstants.OpenCV_MatSubstract));
         myListViewAdapter.getMode().add(new CommandData(index++,CommandConstants.OpenCV_MatAdd));
+        myListViewAdapter.getMode().add(new CommandData(index++,CommandConstants.OpenCV_BrightContrastAdjust));
+        myListViewAdapter.getMode().add(new CommandData(index++,CommandConstants.OpenCV_MatDemo));
+        myListViewAdapter.getMode().add(new CommandData(index++,CommandConstants.OpenCV_GetSubMat));
         myListViewAdapter.notifyDataSetChanged();
 
     }

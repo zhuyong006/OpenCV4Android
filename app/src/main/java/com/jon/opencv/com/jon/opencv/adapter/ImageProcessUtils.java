@@ -6,8 +6,12 @@ import android.util.Log;
 import org.opencv.android.Utils;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
+import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
+
+import static org.opencv.core.CvType.CV_32F;
+import static org.opencv.core.CvType.CV_8U;
 
 /**
  * Created by HASEE on 2019/3/9.
@@ -92,6 +96,7 @@ public class ImageProcessUtils {
         Mat white = new Mat(src.size(),src.type(), Scalar.all(255));
         Core.subtract(white,src,src);
         Utils.matToBitmap(src, bitmap);
+        white.release();
         src.release();
         return bitmap;
     }
@@ -99,11 +104,66 @@ public class ImageProcessUtils {
         Log.e(TAG,"MatAdd");
         Mat src = new Mat();
         Utils.bitmapToMat(bitmap,src);
-        Mat white = new Mat(src.size(),src.type(), Scalar.all(255));
-        double weight = 0.5;
-        Core.addWeighted(white,weight,src,1-weight,0,src);
+        //Mat white = new Mat(src.size(),src.type(), Scalar.all(255));
+        Mat ratio = new Mat(src.size(),src.type(),Scalar.all(20));
+        //double weight = 0.5;
+        //Core.addWeighted(white,weight,src,1-weight,0,src);
+        Core.add(src,ratio,src);
         Utils.matToBitmap(src, bitmap);
+        //white.release();
+        ratio.release();
         src.release();
         return bitmap;
+    }
+    public static Bitmap MatBrightContrastAdjust(Bitmap bitmap){
+        Log.e(TAG,"MatBrightContrastAdjust");
+        Mat src = new Mat();
+        Utils.bitmapToMat(bitmap,src);
+
+        src.convertTo(src,CV_32F);
+        Mat bright_ratio = new Mat(src.size(),src.type(),Scalar.all(10));
+        Mat contrast_ratio = new Mat(src.size(),src.type(),Scalar.all(1.2));
+
+        Core.add(src,bright_ratio,src);
+        Core.multiply(src,contrast_ratio,src);
+
+        src.convertTo(src,CV_8U);
+        Utils.matToBitmap(src, bitmap);
+
+        contrast_ratio.release();
+        bright_ratio.release();
+        src.release();
+        return bitmap;
+    }
+    public static Bitmap MatDemoUsage(Bitmap bitmap){
+        Log.e(TAG,"MatDemoUsage");
+
+
+        Mat src = new Mat(bitmap.getHeight(),bitmap.getWidth(),CV_8U,new Scalar(100));
+
+        //bitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(),Bitmap.Config.ARGB_8888);
+
+
+        Utils.matToBitmap(src, bitmap);
+
+
+        src.release();
+        return bitmap;
+    }
+    public static Bitmap GetRoiArea(Bitmap bitmap){
+        Log.e(TAG,"GetRoiArea");
+
+        Rect rect = new Rect(200,150,400,300);
+        Bitmap dst_bitmap = Bitmap.createBitmap(rect.width,rect.height, Bitmap.Config.ARGB_8888);
+
+        Mat src = new Mat();
+        Utils.bitmapToMat(bitmap,src);
+        Mat dst = src.submat(rect);
+        Imgproc.cvtColor(dst,dst,Imgproc.COLOR_BGR2GRAY);
+        Utils.matToBitmap(dst,dst_bitmap);
+
+        src.release();
+        dst.release();
+        return dst_bitmap;
     }
 }
