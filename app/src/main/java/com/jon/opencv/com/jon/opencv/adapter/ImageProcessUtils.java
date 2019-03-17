@@ -5,9 +5,12 @@ import android.util.Log;
 
 import org.opencv.android.Utils;
 import org.opencv.core.Core;
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
+import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
 import static org.opencv.core.CvType.CV_32F;
@@ -29,6 +32,29 @@ public class ImageProcessUtils {
         Utils.matToBitmap(dst, bitmap);
         src.release();
         dst.release();
+        return bitmap;
+    }
+
+    public static Bitmap AddSalt(Bitmap bitmap){
+        Log.e(TAG,"AddSalt");
+        Mat src = new Mat();
+        Utils.bitmapToMat(bitmap,src);
+        int width = src.width();
+        int height = src.height();
+        int cnt = src.channels();
+        byte[] bgra = new byte[cnt];
+        for(int i=0;i<3000;i++)
+        {
+            int x = (int)(Math.random()*width);
+            int y = (int)(Math.random()*height);
+            src.get(y, x, bgra);
+            bgra[0]=(byte)(255);
+            bgra[1]=(byte)(255);
+            bgra[2]=(byte)(255);
+            src.put(y, x, bgra);
+        }
+        Utils.matToBitmap(src, bitmap);
+        src.release();
         return bitmap;
     }
     public static Bitmap InvertMatSlow(Bitmap bitmap){
@@ -165,5 +191,64 @@ public class ImageProcessUtils {
         src.release();
         dst.release();
         return dst_bitmap;
+    }
+    public static Bitmap MeanBlur(Bitmap bitmap){
+        Log.e(TAG,"MeanBlur");
+
+        Mat src = new Mat();
+        Utils.bitmapToMat(bitmap,src);
+        //卷积的内核必须是奇数
+        //Imgproc.blur(src,src, new Size(5,5),new Point(-1,-1),Imgproc.BORDER_DEFAULT);
+        // 水平方向有抖动感
+        //Imgproc.blur(src,src, new Size(15,1),new Point(-1,-1),Imgproc.BORDER_DEFAULT);
+        // 垂直方向有抖动感
+        Imgproc.blur(src,src, new Size(1,15),new Point(-1,-1),Imgproc.BORDER_DEFAULT);
+        Utils.matToBitmap(src,bitmap);
+        src.release();
+        return bitmap;
+    }
+    public static Bitmap MedianBlur(Bitmap bitmap){
+        Log.e(TAG,"MedianBlur");
+
+        Mat src = new Mat();
+        Utils.bitmapToMat(bitmap,src);
+
+        Imgproc.medianBlur(src,src,3);
+        Utils.matToBitmap(src,bitmap);
+        src.release();
+        return bitmap;
+    }
+    public static Bitmap GaussianBlur(Bitmap bitmap){
+        Log.e(TAG,"GaussianBlur");
+
+        Mat src = new Mat();
+        Utils.bitmapToMat(bitmap,src);
+        //掩模小点，或者sigma小点(1.0左右或1.0以下)可以消除高斯噪声
+        //Imgproc.GaussianBlur(src,src,new Size(3,3),0);
+        //掩模大点，或者sigma过大会导致毛玻璃特效
+        Imgproc.GaussianBlur(src,src,new Size(91,91),0);
+        Utils.matToBitmap(src,bitmap);
+        src.release();
+        return bitmap;
+    }
+    public static Bitmap BilateralFilter(Bitmap bitmap){
+        Log.e(TAG,"BilateralFilter");
+
+        Mat src = new Mat();
+        Mat dst = new Mat();
+        Utils.bitmapToMat(bitmap,src);
+        //双边滤波的输入参数只接受单通道或者3通道数据
+        Imgproc.cvtColor(src,src,Imgproc.COLOR_BGRA2BGR);
+        //这里如果d为0，那么d会通过sigmaSpace得出
+        Imgproc.bilateralFilter(src,dst,0,150,25);
+
+       // Mat kernel = new Mat(3,3, CvType.CV_16S);
+       // kernel.put(0,0,0,-1,0,-1,5,-1,0,-1,0);
+       // Imgproc.filter2D(dst,dst,-1,kernel,new Point(-1,-1),0.0,4);
+       // kernel.release();
+        Utils.matToBitmap(dst,bitmap);
+        src.release();
+        dst.release();
+        return bitmap;
     }
 }

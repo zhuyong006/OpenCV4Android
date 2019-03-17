@@ -17,6 +17,8 @@ import com.jon.opencv.com.jon.opencv.adapter.ImageProcessUtils;
 
 import org.opencv.android.OpenCVLoader;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -26,11 +28,14 @@ public class ProcessImageActivity extends AppCompatActivity implements View.OnCl
     private ImageView imageView = null;
     private Button process_button= null;
     private Button select_button= null;
+    private Button save_button= null;
     private TextView duration = null;
     private int REQUEST_GET_IMAGE = 1;
     private int MAX_SIZE = 768;
     private Bitmap SelectBitmap = null;
     private String command = null;
+    private Bitmap bitmap = null;
+    private File SavePicFile = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,6 +50,10 @@ public class ProcessImageActivity extends AppCompatActivity implements View.OnCl
         select_button = (Button)findViewById(R.id.photo_choose);
         select_button.setTag("select_image");
         select_button.setOnClickListener(this);
+
+        save_button = (Button)findViewById(R.id.save_photo);
+        save_button.setTag("save_image");
+        save_button.setOnClickListener(this);
 
         duration = (TextView) findViewById(R.id.duration);
 
@@ -64,6 +73,9 @@ public class ProcessImageActivity extends AppCompatActivity implements View.OnCl
         }
     }
 
+    public ProcessImageActivity() {
+    }
+
     @Override
     public void onClick(View v) {
         String obj = (String)v.getTag();
@@ -71,6 +83,36 @@ public class ProcessImageActivity extends AppCompatActivity implements View.OnCl
             process_image();
         else if(obj == "select_image")
             select_image();
+        else if(obj == "save_image") {
+            Log.e(TAG,"save_image");
+            save_image();
+        }
+    }
+
+    private void save_image() {
+
+        FileOutputStream fos;
+
+        if(bitmap == null)
+            return;
+        try {
+
+            SavePicFile = new File("/sdcard/Pictures/Screenshots/"+command+".jpg");
+            if (!SavePicFile.exists()) {
+                SavePicFile.getParentFile().mkdirs();
+                SavePicFile.createNewFile();
+            }
+            fos = new FileOutputStream(SavePicFile);
+            boolean status = bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+            if(status != true)
+                Log.e(TAG,"compress failed");
+            fos.flush();
+            fos.close();
+        }catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
+
 
     }
 
@@ -119,8 +161,9 @@ public class ProcessImageActivity extends AppCompatActivity implements View.OnCl
 
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-        Bitmap bitmap;
+
         long cost = 0;
+        bitmap = null;
 
         if(SelectBitmap == null) {
             bitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.girl, options);
@@ -133,6 +176,8 @@ public class ProcessImageActivity extends AppCompatActivity implements View.OnCl
 
         if(command.equals(CommandConstants.OpenCV_EnvTest))
             bitmap = ImageProcessUtils.convert2Gray(bitmap);
+        else if(command.equals(CommandConstants.OpenCV_SaltNoise))
+            bitmap = ImageProcessUtils.AddSalt(bitmap);
         else if(command.equals(CommandConstants.OpenCV_InvertPixelSlow))
             bitmap = ImageProcessUtils.InvertMatSlow(bitmap);
         else if(command.equals(CommandConstants.OpenCV_InvertPixelFast))
@@ -149,6 +194,15 @@ public class ProcessImageActivity extends AppCompatActivity implements View.OnCl
             bitmap = ImageProcessUtils.MatDemoUsage(bitmap);
         else if(command.equals(CommandConstants.OpenCV_GetSubMat))
             bitmap = ImageProcessUtils.GetRoiArea(bitmap);
+        else if(command.equals(CommandConstants.OpenCV_MeanBlur))
+            bitmap = ImageProcessUtils.MeanBlur(bitmap);
+        else if(command.equals(CommandConstants.OpenCV_MediaBlur))
+            bitmap = ImageProcessUtils.MedianBlur(bitmap);
+        else if(command.equals(CommandConstants.OpenCV_GaussianBlur))
+            bitmap = ImageProcessUtils.GaussianBlur(bitmap);
+        else if(command.equals(CommandConstants.OpenCV_BilateralFilter))
+            bitmap = ImageProcessUtils.BilateralFilter(bitmap);
+
 
         cost = System.currentTimeMillis() - cost;
         duration.setText(Long.toString(cost));

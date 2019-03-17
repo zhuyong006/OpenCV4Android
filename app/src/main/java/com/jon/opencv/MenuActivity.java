@@ -30,6 +30,7 @@ public class MenuActivity extends AppCompatActivity implements AdapterView.OnIte
         listView.setAdapter(myListViewAdapter);
         listView.setOnItemClickListener(this);
         myListViewAdapter.getMode().add(new CommandData(index++,CommandConstants.OpenCV_EnvTest));
+        myListViewAdapter.getMode().add(new CommandData(index++,CommandConstants.OpenCV_SaltNoise));
         myListViewAdapter.getMode().add(new CommandData(index++,CommandConstants.OpenCV_InvertPixelSlow));
         myListViewAdapter.getMode().add(new CommandData(index++,CommandConstants.OpenCV_InvertPixelFast));
         myListViewAdapter.getMode().add(new CommandData(index++,CommandConstants.OpenCV_InvertBitmap));
@@ -38,6 +39,10 @@ public class MenuActivity extends AppCompatActivity implements AdapterView.OnIte
         myListViewAdapter.getMode().add(new CommandData(index++,CommandConstants.OpenCV_BrightContrastAdjust));
         myListViewAdapter.getMode().add(new CommandData(index++,CommandConstants.OpenCV_MatDemo));
         myListViewAdapter.getMode().add(new CommandData(index++,CommandConstants.OpenCV_GetSubMat));
+        myListViewAdapter.getMode().add(new CommandData(index++,CommandConstants.OpenCV_MeanBlur));
+        myListViewAdapter.getMode().add(new CommandData(index++,CommandConstants.OpenCV_MediaBlur));
+        myListViewAdapter.getMode().add(new CommandData(index++,CommandConstants.OpenCV_GaussianBlur));
+        myListViewAdapter.getMode().add(new CommandData(index++,CommandConstants.OpenCV_BilateralFilter));
         myListViewAdapter.notifyDataSetChanged();
 
     }

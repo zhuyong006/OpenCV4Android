@@ -6,6 +6,7 @@ package com.jon.opencv.com.jon.opencv.adapter;
 
 public class CommandConstants {
     static public final String OpenCV_EnvTest = "环境测试-灰度";
+    static public final String OpenCV_SaltNoise = "产生椒盐噪声";
     static public final String OpenCV_InvertPixelSlow = "Mat像素操作慢-反色";
     static public final String OpenCV_InvertPixelFast = "Mat像素操作快-反色";
     static public final String OpenCV_InvertBitmap = "Bitmap像素操作-反色";
@@ -14,4 +15,9 @@ public class CommandConstants {
     static public final String OpenCV_BrightContrastAdjust = "Mat像素操作-亮度对比度";
     static public final String OpenCV_MatDemo = "Mat操作-Demo演示";
     static public final String OpenCV_GetSubMat = "Mat操作-获取子图";
+    static public final String OpenCV_MeanBlur = "OpenCV-均值模糊";
+    static public final String OpenCV_MediaBlur = "OpenCV-中值模糊";
+    static public final String OpenCV_GaussianBlur = "OpenCV-高斯模糊";
+    static public final String OpenCV_BilateralFilter = "OpenCV-双边滤波";
+
 }
