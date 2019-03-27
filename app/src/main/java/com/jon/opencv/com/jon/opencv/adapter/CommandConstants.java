@@ -19,5 +19,12 @@ public class CommandConstants {
     static public final String OpenCV_MediaBlur = "OpenCV-中值模糊";
     static public final String OpenCV_GaussianBlur = "OpenCV-高斯模糊";
     static public final String OpenCV_BilateralFilter = "OpenCV-双边滤波";
-
+    public static final String OpenCV_CustomMeanBlur = "OpenCV自定义算子-模糊";
+    public static final String OpenCV_EdgeDetect = "OpenCV自定义算子-边缘";
+    public static final String OpenCV_Sharpen = "OpenCV自定义算子-锐化";
+    public static final String OpenCV_Erode = "OpenCV-腐蚀";
+    public static final String OpenCV_Dilate = "OpenCV-膨胀";
+    public static final String OpenCV_Morph_Open = "OpenCV-开操作";
+    public static final String OpenCV_Morph_Close = "OpenCV-闭操作";
+    public static final String OpenCV_Morph_Line_Detect = "OpenCV-形态学操作只直线检测";
 }

@@ -43,6 +43,14 @@ public class MenuActivity extends AppCompatActivity implements AdapterView.OnIte
         myListViewAdapter.getMode().add(new CommandData(index++,CommandConstants.OpenCV_MediaBlur));
         myListViewAdapter.getMode().add(new CommandData(index++,CommandConstants.OpenCV_GaussianBlur));
         myListViewAdapter.getMode().add(new CommandData(index++,CommandConstants.OpenCV_BilateralFilter));
+        myListViewAdapter.getMode().add(new CommandData(index++,CommandConstants.OpenCV_CustomMeanBlur));
+        myListViewAdapter.getMode().add(new CommandData(index++,CommandConstants.OpenCV_EdgeDetect));
+        myListViewAdapter.getMode().add(new CommandData(index++,CommandConstants.OpenCV_Sharpen));
+        myListViewAdapter.getMode().add(new CommandData(index++,CommandConstants.OpenCV_Erode));
+        myListViewAdapter.getMode().add(new CommandData(index++,CommandConstants.OpenCV_Dilate));
+        myListViewAdapter.getMode().add(new CommandData(index++,CommandConstants.OpenCV_Morph_Open));
+        myListViewAdapter.getMode().add(new CommandData(index++,CommandConstants.OpenCV_Morph_Close));
+        myListViewAdapter.getMode().add(new CommandData(index++,CommandConstants.OpenCV_Morph_Line_Detect));
         myListViewAdapter.notifyDataSetChanged();
 
     }

@@ -15,6 +15,9 @@ import org.opencv.imgproc.Imgproc;
 
 import static org.opencv.core.CvType.CV_32F;
 import static org.opencv.core.CvType.CV_8U;
+import static org.opencv.imgproc.Imgproc.MORPH_CLOSE;
+import static org.opencv.imgproc.Imgproc.MORPH_OPEN;
+import static org.opencv.imgproc.Imgproc.MORPH_RECT;
 
 /**
  * Created by HASEE on 2019/3/9.
@@ -240,13 +243,95 @@ public class ImageProcessUtils {
         //双边滤波的输入参数只接受单通道或者3通道数据
         Imgproc.cvtColor(src,src,Imgproc.COLOR_BGRA2BGR);
         //这里如果d为0，那么d会通过sigmaSpace得出
-        Imgproc.bilateralFilter(src,dst,0,150,25);
+        Imgproc.bilateralFilter(src,dst,13,150,25);
 
-       // Mat kernel = new Mat(3,3, CvType.CV_16S);
-       // kernel.put(0,0,0,-1,0,-1,5,-1,0,-1,0);
-       // Imgproc.filter2D(dst,dst,-1,kernel,new Point(-1,-1),0.0,4);
-       // kernel.release();
+        // Mat kernel = new Mat(3,3, CvType.CV_16S);
+        // kernel.put(0,0,0,-1,0,-1,5,-1,0,-1,0);
+        // Imgproc.filter2D(dst,dst,-1,kernel,new Point(-1,-1),0.0,Imgproc.BORDER_DEFAULT);
+        // kernel.release();
         Utils.matToBitmap(dst,bitmap);
+        src.release();
+        dst.release();
+        return bitmap;
+    }
+
+    public static void CustomFilter(String command, Bitmap bitmap) {
+        Mat src = new Mat();
+        Mat dst = new Mat();
+        Utils.bitmapToMat(bitmap, src);
+        Mat kernel = getCustomOperator(command);
+        Imgproc.filter2D(src, dst, -1, kernel, new Point(-1, -1), 0.0, Imgproc.BORDER_DEFAULT);
+        Utils.matToBitmap(dst, bitmap);
+        kernel.release();
+        src.release();
+        dst.release();
+    }
+
+    private static Mat getCustomOperator(String command) {
+        Mat kernel = new Mat(3, 3, CvType.CV_32FC1);
+        if(CommandConstants.OpenCV_CustomMeanBlur.equals(command)) {
+            kernel.put(0, 0, 1.0/9.0, 1.0/9.0, 1.0/9.0, 1.0/9.0, 1.0/9.0, 1.0/9.0, 1.0/9.0, 1.0/9.0, 1.0/9.0);
+        } else if(CommandConstants.OpenCV_EdgeDetect.equals(command)) {
+            kernel.put(0, 0, -1, -1, -1, -1, 8, -1, -1, -1, -1);
+        } else if(CommandConstants.OpenCV_Sharpen.equals(command)) {
+            kernel.put(0, 0, -1, -1, -1, -1, 9, -1, -1, -1, -1);
+        }
+        return kernel;
+    }
+    public static void ErodeAndDilate(String command, Bitmap bitmap) {
+        Mat src = new Mat();
+        Mat dst = new Mat();
+        Utils.bitmapToMat(bitmap, src);
+        //获取结构元素，需要留意结构元素不一定都是矩形，它还可以是十字形等任意形状
+        Mat kernel = Imgproc.getStructuringElement(MORPH_RECT,new Size(3,3),new Point(-1,-1));
+
+        //腐蚀：用结构元素的最小值替换，最后一个参数是迭代次数
+        if(CommandConstants.OpenCV_Erode.equals(command)) {
+            Imgproc.erode(src,dst,kernel,new Point(-1,-1),4);
+        //膨胀: 用结构元素的最大值替换，最后一个参数是迭代次数
+        } else if(CommandConstants.OpenCV_Dilate.equals(command)) {
+            Imgproc.dilate(src, dst, kernel, new Point(-1, -1), 4);
+        }
+
+        Utils.matToBitmap(dst, bitmap);
+        kernel.release();
+        src.release();
+        dst.release();
+    }
+    public static void OpenAndClose(String command, Bitmap bitmap) {
+        Mat src = new Mat();
+        Mat dst = new Mat();
+        Utils.bitmapToMat(bitmap, src);
+        //获取结构元素，需要留意结构元素不一定都是矩形，它还可以是十字形等任意形状
+        Mat kernel = Imgproc.getStructuringElement(MORPH_RECT,new Size(3,3),new Point(-1,-1));
+
+        //腐蚀：用结构元素的最小值替换，最后一个参数是迭代次数
+        if(CommandConstants.OpenCV_Morph_Open.equals(command)) {
+            Imgproc.morphologyEx(src,dst,MORPH_OPEN,kernel,new Point(-1,-1),2);
+            //膨胀: 用结构元素的最大值替换，最后一个参数是迭代次数
+        } else if(CommandConstants.OpenCV_Morph_Close.equals(command)) {
+            Imgproc.morphologyEx(src,dst,MORPH_CLOSE,kernel,new Point(-1,-1),2);
+        }
+
+        Utils.matToBitmap(dst, bitmap);
+        kernel.release();
+        src.release();
+        dst.release();
+    }
+    public static Bitmap MorphLineDetect(Bitmap bitmap) {
+        Mat src = new Mat();
+        Mat dst = new Mat();
+        Utils.bitmapToMat(bitmap, src);
+        //获取结构元素，需要留意结构元素不一定都是矩形，它还可以是十字形等任意形状
+        Mat kernel = Imgproc.getStructuringElement(MORPH_RECT,new Size(100,1),new Point(-1,-1));
+
+        Imgproc.cvtColor(src,src,Imgproc.COLOR_BGR2GRAY);
+        Imgproc.threshold(src,src,0,255,Imgproc.THRESH_BINARY_INV | Imgproc.THRESH_OTSU);
+
+        Imgproc.morphologyEx(src,dst,MORPH_OPEN,kernel,new Point(-1,-1),1);
+
+        Utils.matToBitmap(dst, bitmap);
+        kernel.release();
         src.release();
         dst.release();
         return bitmap;

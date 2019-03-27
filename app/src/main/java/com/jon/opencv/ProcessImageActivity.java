@@ -202,7 +202,18 @@ public class ProcessImageActivity extends AppCompatActivity implements View.OnCl
             bitmap = ImageProcessUtils.GaussianBlur(bitmap);
         else if(command.equals(CommandConstants.OpenCV_BilateralFilter))
             bitmap = ImageProcessUtils.BilateralFilter(bitmap);
-
+        else if(command.equals(CommandConstants.OpenCV_CustomMeanBlur)
+                || command.equals(CommandConstants.OpenCV_EdgeDetect)
+                || command.equals(CommandConstants.OpenCV_Sharpen) )
+            ImageProcessUtils.CustomFilter(command,bitmap);
+        else if(command.equals(CommandConstants.OpenCV_Erode)
+                || command.equals(CommandConstants.OpenCV_Dilate))
+            ImageProcessUtils.ErodeAndDilate(command,bitmap);
+        else if(command.equals(CommandConstants.OpenCV_Morph_Open)
+                || command.equals(CommandConstants.OpenCV_Morph_Close))
+            ImageProcessUtils.OpenAndClose(command,bitmap);
+        else if(command.equals(CommandConstants.OpenCV_Morph_Line_Detect))
+            bitmap = ImageProcessUtils.MorphLineDetect(bitmap);
 
         cost = System.currentTimeMillis() - cost;
         duration.setText(Long.toString(cost));
