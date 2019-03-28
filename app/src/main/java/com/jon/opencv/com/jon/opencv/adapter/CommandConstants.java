@@ -4,7 +4,7 @@ package com.jon.opencv.com.jon.opencv.adapter;
  * Created by HASEE on 2019/3/9.
  */
 
-public class CommandConstants {
+public interface CommandConstants {
     static public final String OpenCV_EnvTest = "环境测试-灰度";
     static public final String OpenCV_SaltNoise = "产生椒盐噪声";
     static public final String OpenCV_InvertPixelSlow = "Mat像素操作慢-反色";
@@ -26,5 +26,6 @@ public class CommandConstants {
     public static final String OpenCV_Dilate = "OpenCV-膨胀";
     public static final String OpenCV_Morph_Open = "OpenCV-开操作";
     public static final String OpenCV_Morph_Close = "OpenCV-闭操作";
-    public static final String OpenCV_Morph_Line_Detect = "OpenCV-形态学操作只直线检测";
+    public static final String OpenCV_Morph_Line_Detect = "OpenCV-形态学操作之直线检测";
+    public static final String OpenCV_Binary = "OpenCV-二值化";
 }

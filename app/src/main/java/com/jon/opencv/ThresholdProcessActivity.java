@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.jon.opencv.com.jon.opencv.adapter.CommandConstants;
@@ -22,7 +23,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class ProcessImageActivity extends AppCompatActivity implements View.OnClickListener ,CommandConstants{
+public class ThresholdProcessActivity extends AppCompatActivity implements View.OnClickListener ,CommandConstants,SeekBar.OnSeekBarChangeListener{
     private String TAG = "OpenCV.Jon";
     private boolean Status = false;
     private ImageView imageView = null;
@@ -30,16 +31,19 @@ public class ProcessImageActivity extends AppCompatActivity implements View.OnCl
     private Button select_button= null;
     private Button save_button= null;
     private TextView duration = null;
+    private TextView progres_value = null;
     private int REQUEST_GET_IMAGE = 1;
+    private SeekBar myseekBar = null;
     private int MAX_SIZE = 768;
     private Bitmap SelectBitmap = null;
     private String command = null;
     private Bitmap bitmap = null;
     private File SavePicFile = null;
+    private int seek_value = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.opencv_process_photo);
+        setContentView(R.layout.threshold_process);
 
         command = this.getIntent().getStringExtra("command");
         process_button = (Button)findViewById(R.id.photo_process);
@@ -55,7 +59,12 @@ public class ProcessImageActivity extends AppCompatActivity implements View.OnCl
         save_button.setTag("save_image");
         save_button.setOnClickListener(this);
 
+        progres_value = (TextView) findViewById(R.id.progres_value);
         duration = (TextView) findViewById(R.id.duration);
+
+        myseekBar = (SeekBar)this.findViewById(R.id.seekBar);
+        myseekBar.setEnabled(true);
+        myseekBar.setOnSeekBarChangeListener(this);
 
         imageView = (ImageView)findViewById(R.id.imageView);
         initOpenCVLibs();
@@ -71,9 +80,6 @@ public class ProcessImageActivity extends AppCompatActivity implements View.OnCl
         }else{
             Log.e(TAG, "OpenCV Init Success");
         }
-    }
-
-    public ProcessImageActivity() {
     }
 
     @Override
@@ -153,7 +159,7 @@ public class ProcessImageActivity extends AppCompatActivity implements View.OnCl
                 ImageView imageView = (ImageView)findViewById(R.id.imageView);
                 imageView.setImageBitmap(SelectBitmap);
             }catch (IOException io) {
-                    Log.e(TAG,io.getMessage());
+                Log.e(TAG,io.getMessage());
             }
         }
     }
@@ -174,49 +180,29 @@ public class ProcessImageActivity extends AppCompatActivity implements View.OnCl
 
         cost = System.currentTimeMillis();
 
-        if(command.equals(OpenCV_EnvTest))
-            bitmap = ImageProcessUtils.convert2Gray(bitmap);
-        else if(command.equals(OpenCV_SaltNoise))
-            bitmap = ImageProcessUtils.AddSalt(bitmap);
-        else if(command.equals(OpenCV_InvertPixelSlow))
-            bitmap = ImageProcessUtils.InvertMatSlow(bitmap);
-        else if(command.equals(OpenCV_InvertPixelFast))
-            bitmap = ImageProcessUtils.InvertMatFast(bitmap);
-        else if(command.equals(OpenCV_InvertBitmap))
-            bitmap = ImageProcessUtils.InvertBitmap(bitmap);
-        else if(command.equals(OpenCV_MatSubstract))
-            bitmap = ImageProcessUtils.MatSubstract(bitmap);
-        else if(command.equals(OpenCV_MatAdd))
-            bitmap = ImageProcessUtils.MatAdd(bitmap);
-        else if(command.equals(OpenCV_BrightContrastAdjust))
-            bitmap = ImageProcessUtils.MatBrightContrastAdjust(bitmap);
-        else if(command.equals(OpenCV_MatDemo))
-            bitmap = ImageProcessUtils.MatDemoUsage(bitmap);
-        else if(command.equals(OpenCV_GetSubMat))
-            bitmap = ImageProcessUtils.GetRoiArea(bitmap);
-        else if(command.equals(OpenCV_MeanBlur))
-            bitmap = ImageProcessUtils.MeanBlur(bitmap);
-        else if(command.equals(OpenCV_MediaBlur))
-            bitmap = ImageProcessUtils.MedianBlur(bitmap);
-        else if(command.equals(OpenCV_GaussianBlur))
-            bitmap = ImageProcessUtils.GaussianBlur(bitmap);
-        else if(command.equals(OpenCV_BilateralFilter))
-            bitmap = ImageProcessUtils.BilateralFilter(bitmap);
-        else if(command.equals(OpenCV_CustomMeanBlur)
-                || command.equals(OpenCV_EdgeDetect)
-                || command.equals(OpenCV_Sharpen) )
-            ImageProcessUtils.CustomFilter(command,bitmap);
-        else if(command.equals(OpenCV_Erode)
-                || command.equals(OpenCV_Dilate))
-            ImageProcessUtils.ErodeAndDilate(command,bitmap);
-        else if(command.equals(OpenCV_Morph_Open)
-                || command.equals(OpenCV_Morph_Close))
-            ImageProcessUtils.OpenAndClose(command,bitmap);
-        else if(command.equals(OpenCV_Morph_Line_Detect))
-            bitmap = ImageProcessUtils.MorphLineDetect(bitmap);
+        if(command.equals(OpenCV_Binary))
+            bitmap = ImageProcessUtils.ImageBinarization(seek_value,bitmap);
+
 
         cost = System.currentTimeMillis() - cost;
         duration.setText(Long.toString(cost));
         imageView.setImageBitmap(bitmap);
+    }
+
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+        seek_value = myseekBar.getProgress();
+        progres_value.setText("当前阈值为: " + seek_value);
+        process_image();
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+
     }
 }

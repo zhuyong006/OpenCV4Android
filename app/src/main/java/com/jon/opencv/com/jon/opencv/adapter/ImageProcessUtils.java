@@ -23,7 +23,7 @@ import static org.opencv.imgproc.Imgproc.MORPH_RECT;
  * Created by HASEE on 2019/3/9.
  */
 
-public class ImageProcessUtils {
+public class ImageProcessUtils implements CommandConstants{
     public static final String TAG = "OpenCV.Jon";
 
     public static Bitmap convert2Gray(Bitmap bitmap){
@@ -269,11 +269,11 @@ public class ImageProcessUtils {
 
     private static Mat getCustomOperator(String command) {
         Mat kernel = new Mat(3, 3, CvType.CV_32FC1);
-        if(CommandConstants.OpenCV_CustomMeanBlur.equals(command)) {
+        if(OpenCV_CustomMeanBlur.equals(command)) {
             kernel.put(0, 0, 1.0/9.0, 1.0/9.0, 1.0/9.0, 1.0/9.0, 1.0/9.0, 1.0/9.0, 1.0/9.0, 1.0/9.0, 1.0/9.0);
-        } else if(CommandConstants.OpenCV_EdgeDetect.equals(command)) {
+        } else if(OpenCV_EdgeDetect.equals(command)) {
             kernel.put(0, 0, -1, -1, -1, -1, 8, -1, -1, -1, -1);
-        } else if(CommandConstants.OpenCV_Sharpen.equals(command)) {
+        } else if(OpenCV_Sharpen.equals(command)) {
             kernel.put(0, 0, -1, -1, -1, -1, 9, -1, -1, -1, -1);
         }
         return kernel;
@@ -286,10 +286,10 @@ public class ImageProcessUtils {
         Mat kernel = Imgproc.getStructuringElement(MORPH_RECT,new Size(3,3),new Point(-1,-1));
 
         //腐蚀：用结构元素的最小值替换，最后一个参数是迭代次数
-        if(CommandConstants.OpenCV_Erode.equals(command)) {
+        if(OpenCV_Erode.equals(command)) {
             Imgproc.erode(src,dst,kernel,new Point(-1,-1),4);
         //膨胀: 用结构元素的最大值替换，最后一个参数是迭代次数
-        } else if(CommandConstants.OpenCV_Dilate.equals(command)) {
+        } else if(OpenCV_Dilate.equals(command)) {
             Imgproc.dilate(src, dst, kernel, new Point(-1, -1), 4);
         }
 
@@ -306,10 +306,10 @@ public class ImageProcessUtils {
         Mat kernel = Imgproc.getStructuringElement(MORPH_RECT,new Size(3,3),new Point(-1,-1));
 
         //腐蚀：用结构元素的最小值替换，最后一个参数是迭代次数
-        if(CommandConstants.OpenCV_Morph_Open.equals(command)) {
+        if(OpenCV_Morph_Open.equals(command)) {
             Imgproc.morphologyEx(src,dst,MORPH_OPEN,kernel,new Point(-1,-1),2);
             //膨胀: 用结构元素的最大值替换，最后一个参数是迭代次数
-        } else if(CommandConstants.OpenCV_Morph_Close.equals(command)) {
+        } else if(OpenCV_Morph_Close.equals(command)) {
             Imgproc.morphologyEx(src,dst,MORPH_CLOSE,kernel,new Point(-1,-1),2);
         }
 
@@ -332,6 +332,19 @@ public class ImageProcessUtils {
 
         Utils.matToBitmap(dst, bitmap);
         kernel.release();
+        src.release();
+        dst.release();
+        return bitmap;
+    }
+    public static Bitmap ImageBinarization(int value,Bitmap bitmap) {
+        Mat src = new Mat();
+        Mat dst = new Mat();
+        Utils.bitmapToMat(bitmap, src);
+
+        Imgproc.cvtColor(src,src,Imgproc.COLOR_BGR2GRAY);
+        Imgproc.threshold(src,dst,value,255,Imgproc.THRESH_BINARY);
+
+        Utils.matToBitmap(dst, bitmap);
         src.release();
         dst.release();
         return bitmap;
