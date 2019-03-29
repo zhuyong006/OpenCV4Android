@@ -182,10 +182,16 @@ public class ThresholdProcessActivity extends AppCompatActivity implements View.
 
         if(command.equals(OpenCV_Binary))
             bitmap = ImageProcessUtils.ImageBinarization(seek_value,bitmap);
+        else if(command.equals(OpenCV_AdaptiveBinary)) {
+            if((seek_value % 2) == 0)
+                seek_value = seek_value+1;
+            if(seek_value == 1)
+                seek_value = 3;
 
-
+            bitmap = ImageProcessUtils.ImageAdaptiveBinarization(seek_value, bitmap);
+        }
         cost = System.currentTimeMillis() - cost;
-        duration.setText(Long.toString(cost));
+        duration.setText("耗时" + Long.toString(cost));
         imageView.setImageBitmap(bitmap);
     }
 

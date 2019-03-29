@@ -216,7 +216,7 @@ public class ProcessImageActivity extends AppCompatActivity implements View.OnCl
             bitmap = ImageProcessUtils.MorphLineDetect(bitmap);
 
         cost = System.currentTimeMillis() - cost;
-        duration.setText(Long.toString(cost));
+        duration.setText("耗时" + Long.toString(cost));
         imageView.setImageBitmap(bitmap);
     }
 }

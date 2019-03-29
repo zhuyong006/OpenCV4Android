@@ -349,4 +349,19 @@ public class ImageProcessUtils implements CommandConstants{
         dst.release();
         return bitmap;
     }
+    public static Bitmap ImageAdaptiveBinarization(int value,Bitmap bitmap) {
+        Mat src = new Mat();
+        Mat dst = new Mat();
+        Utils.bitmapToMat(bitmap, src);
+
+        Imgproc.cvtColor(src,src,Imgproc.COLOR_BGR2GRAY);
+        //block_size 必须是奇数
+        //Imgproc.adaptiveThreshold(src,dst,255,Imgproc.ADAPTIVE_THRESH_MEAN_C,Imgproc.THRESH_BINARY,value,0);
+        Imgproc.adaptiveThreshold(src,dst,255,Imgproc.ADAPTIVE_THRESH_GAUSSIAN_C,Imgproc.THRESH_BINARY,value,0);
+
+        Utils.matToBitmap(dst, bitmap);
+        src.release();
+        dst.release();
+        return bitmap;
+    }
 }

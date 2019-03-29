@@ -28,4 +28,5 @@ public interface CommandConstants {
     public static final String OpenCV_Morph_Close = "OpenCV-闭操作";
     public static final String OpenCV_Morph_Line_Detect = "OpenCV-形态学操作之直线检测";
     public static final String OpenCV_Binary = "OpenCV-二值化";
+    public static final String OpenCV_AdaptiveBinary = "OpenCV-自适应局部二值化";
 }
