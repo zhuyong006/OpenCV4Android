@@ -66,6 +66,10 @@ public class CommandData implements CommandConstants{
         cList.add(new CommandData(index++,OpenCV_Morph_Line_Detect));
         cList.add(new CommandData(index++,OpenCV_Binary));
         cList.add(new CommandData(index++,OpenCV_AdaptiveBinary));
+        cList.add(new CommandData(index++,OpenCV_HistogramEq));
+        cList.add(new CommandData(index++,OpenCV_Gradient_X));
+        cList.add(new CommandData(index++,OpenCV_Gradient_Y));
+        cList.add(new CommandData(index++,OpenCV_Gradient_XY));
         return cList;
     }
 }

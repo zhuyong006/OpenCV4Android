@@ -191,7 +191,7 @@ public class ThresholdProcessActivity extends AppCompatActivity implements View.
             bitmap = ImageProcessUtils.ImageAdaptiveBinarization(seek_value, bitmap);
         }
         cost = System.currentTimeMillis() - cost;
-        duration.setText("耗时" + Long.toString(cost));
+        duration.setText("耗时" + Long.toString(cost) + "ms");
         imageView.setImageBitmap(bitmap);
     }
 

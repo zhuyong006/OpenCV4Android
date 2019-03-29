@@ -364,4 +364,57 @@ public class ImageProcessUtils implements CommandConstants{
         dst.release();
         return bitmap;
     }
+    //直方图均衡化，输入图像必须是单通道的，处理纯色背景效果不好
+    public static Bitmap HistogramEq(Bitmap bitmap) {
+        Mat src = new Mat();
+        Mat dst = new Mat();
+        Utils.bitmapToMat(bitmap, src);
+
+        Imgproc.cvtColor(src,src,Imgproc.COLOR_BGR2GRAY);
+        Imgproc.equalizeHist(src,dst);
+
+        Utils.matToBitmap(dst, bitmap);
+        src.release();
+        dst.release();
+        return bitmap;
+    }
+    /*
+    * X方向 : sobel算子    [-1 0 +1]                X方向 : Scharr算子     [-3 0 +3]
+    *                      [-2 0 +2]   * I                               [-10 0 +10]
+    *                      [-1 0 +1]                                     [-3 0 +3]
+    * Y方向 : sobel算子    [-1 -2 -1]              Y方向 : Scharr算子     [-3 -10 -3]
+    *                      [ 0  0 0 ]  * I                               [0   0   0]
+    *                      [+1 +2 +1]                                    [+3 +10 +3]
+    * XY方向 : G = |Gx| + |Gy|
+    *  type = 0 :       X方向
+    *  type = 1 :       Y方向
+    *  type = 2 :       XY方向
+    * */
+    public static Bitmap GradientImg(Bitmap bitmap,int type) {
+        Mat gradient_x = new Mat();
+        Mat gradient_y = new Mat();
+        Mat src = new Mat();
+        Utils.bitmapToMat(bitmap, src);
+
+        Imgproc.cvtColor(src,src,Imgproc.COLOR_BGR2GRAY);
+        //这里的CvType.CV_16S，可以防止计算的结果超过255(8位)，产生截断效应，从而使得该点图像亮度为0
+        if(type == 0)
+            Imgproc.Sobel(src,src,CvType.CV_16S,1,0);
+        else if(type == 1)
+            Imgproc.Sobel(src,src,CvType.CV_16S,0,1);
+        else if(type == 2) {
+            Imgproc.Scharr(src,gradient_x,CvType.CV_16S,1,0);
+            Imgproc.Scharr(src,gradient_y,CvType.CV_16S,0,1);
+            Core.convertScaleAbs(gradient_x,gradient_x);
+            Core.convertScaleAbs(gradient_y,gradient_y);
+            Core.addWeighted(gradient_x,0.5,gradient_y,0.5,0,src);
+        }
+        Core.convertScaleAbs(src,src);
+
+        Utils.matToBitmap(src, bitmap);
+        src.release();
+        gradient_x.release();
+        gradient_y.release();
+        return bitmap;
+    }
 }

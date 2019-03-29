@@ -29,4 +29,8 @@ public interface CommandConstants {
     public static final String OpenCV_Morph_Line_Detect = "OpenCV-形态学操作之直线检测";
     public static final String OpenCV_Binary = "OpenCV-二值化";
     public static final String OpenCV_AdaptiveBinary = "OpenCV-自适应局部二值化";
+    public static final String OpenCV_HistogramEq = "OpenCV-直方图均衡";
+    public static final String OpenCV_Gradient_X = "OpenCV-X方向梯度";
+    public static final String OpenCV_Gradient_Y = "OpenCV-Y方向梯度";
+    public static final String OpenCV_Gradient_XY = "OpenCV-XY方向梯度";
 }

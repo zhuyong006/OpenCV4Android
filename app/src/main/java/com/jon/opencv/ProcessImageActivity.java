@@ -214,9 +214,17 @@ public class ProcessImageActivity extends AppCompatActivity implements View.OnCl
             ImageProcessUtils.OpenAndClose(command,bitmap);
         else if(command.equals(OpenCV_Morph_Line_Detect))
             bitmap = ImageProcessUtils.MorphLineDetect(bitmap);
+        else if(command.equals(OpenCV_HistogramEq))
+            bitmap = ImageProcessUtils.HistogramEq(bitmap);
+        else if(command.equals(OpenCV_Gradient_X))
+            bitmap = ImageProcessUtils.GradientImg(bitmap,0);
+        else if(command.equals(OpenCV_Gradient_Y))
+            bitmap = ImageProcessUtils.GradientImg(bitmap,1);
+        else if(command.equals(OpenCV_Gradient_XY))
+            bitmap = ImageProcessUtils.GradientImg(bitmap,2);
 
         cost = System.currentTimeMillis() - cost;
-        duration.setText("耗时" + Long.toString(cost));
+        duration.setText("耗时" + Long.toString(cost) + "ms");
         imageView.setImageBitmap(bitmap);
     }
 }
