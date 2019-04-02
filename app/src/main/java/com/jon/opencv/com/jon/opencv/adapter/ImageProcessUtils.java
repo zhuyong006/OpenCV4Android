@@ -349,6 +349,8 @@ public class ImageProcessUtils implements CommandConstants{
         dst.release();
         return bitmap;
     }
+
+    //局部二值化会对不同的区域产生不同的阈值
     public static Bitmap ImageAdaptiveBinarization(int value,Bitmap bitmap) {
         Mat src = new Mat();
         Mat dst = new Mat();
@@ -415,6 +417,88 @@ public class ImageProcessUtils implements CommandConstants{
         src.release();
         gradient_x.release();
         gradient_y.release();
+        return bitmap;
+    }
+    /*
+    *  之前有学过可以通过拉普拉斯算子求图像边缘，那个方法比较粗糙，尽量选择Canny
+    *  1. 高斯模糊--GaussianBlur
+    *  2. 灰度转换--cvtColor
+    *  3. 计算梯度--Sobel/Scharr
+    *  4. 非最大信号抑制
+    *  5. 高低阈值输出二值图像
+     * */
+    public static Bitmap CannyEdge(int val,Bitmap bitmap) {
+
+
+        Mat src = new Mat();
+        Mat dst = new Mat();
+        Utils.bitmapToMat(bitmap, src);
+
+        Imgproc.GaussianBlur(src,src,new Size(3,3),0,0,Imgproc.BORDER_DEFAULT);
+        Imgproc.cvtColor(src,src,Imgproc.COLOR_BGR2GRAY);
+        Imgproc.Canny(src,dst,val/2,val,3,false);
+
+        Utils.matToBitmap(dst, bitmap);
+        src.release();
+
+
+        return bitmap;
+    }
+
+    public static Bitmap HoughLineDet(int val,Bitmap bitmap) {
+
+
+        Mat src = new Mat();
+        Mat lines = new Mat();
+
+        Utils.bitmapToMat(bitmap, src);
+
+        Mat dst = new Mat(src.size(),src.type());
+
+        if(val == 0)
+            val = 1;
+
+        Imgproc.GaussianBlur(src,src,new Size(3,3),0,0,Imgproc.BORDER_DEFAULT);
+        Imgproc.cvtColor(src,src,Imgproc.COLOR_BGR2GRAY);
+        Imgproc.Canny(src,src,112,224,3,false);
+
+        //  线段检测，这里的rho和theta是指的画极坐标的时候的X轴和Y轴的步长，
+        //  15指的是：必须15个像素以上才认为是线段否则放弃
+        //  3指的是：线段间的间隔至少要有3个像素，否则认为是同一个线段
+//        Imgproc.HoughLinesP(src,lines,1.0,Math.PI/180,val,15,3);
+//        double[] linesp = new double[4];
+//        for(int i=0;i<lines.cols();i++)
+//        {
+//            linesp = lines.get(0,i);
+//            Point p1 = new Point(linesp[0], linesp[1]);
+//            Point p2 = new Point(linesp[2], linesp[3]);
+//            Core.line(dst,p1,p2,new Scalar(0,255,0),2);
+//        }
+
+        Imgproc.HoughLines(src,lines,1,Math.PI/180.0,val);
+        double[] linesp = new double[2];
+        for(int i=0;i<lines.cols();i++)
+        {
+            linesp = lines.get(0,i);
+            double rho = linesp[0];
+            double theta = linesp[1];
+            double a = Math.cos(theta);   //获取角度cos值
+            double b = Math.sin(theta);   //获取角度sin值
+            double x0 = a * rho;    //获取x轴值
+            double y0 = b * rho;    //获取y轴值　　x0和y0是直线的中点
+            int x1 = (int)(x0 + 800*(-b));    //获取这条直线最大值点x1
+            int y1 = (int)(y0 + 800*(a));     //获取这条直线最大值点y1
+            int x2 = (int)(x0 - 800 * (-b));  //获取这条直线最小值点x2　　
+            int y2 = (int)(y0 - 800 * (a));   //获取这条直线最小值点y2　　其中*1000是内部规则
+            Core.line(dst,new Point(x1,y1),new Point(x2,y2),new Scalar(0,255,0),2,8,0);
+        }
+
+        Utils.matToBitmap(dst, bitmap);
+        src.release();
+        lines.release();
+        dst.release();
+
+
         return bitmap;
     }
 }

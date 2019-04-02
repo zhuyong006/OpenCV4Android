@@ -44,7 +44,11 @@ public class MenuActivity extends AppCompatActivity implements AdapterView.OnIte
             Log.e(TAG,"onItemClick CommandData");
 
             Intent intent;
-            if(commandData.getCommand().equals(OpenCV_Binary) || commandData.getCommand().equals(OpenCV_AdaptiveBinary))
+            if(commandData.getCommand().equals(OpenCV_Binary)
+                    || commandData.getCommand().equals(OpenCV_AdaptiveBinary)
+                    || commandData.getCommand().equals(OpenCV_Canny_Edge)
+                    || commandData.getCommand().equals(OpenCV_Hough_LineDet)
+            )
                 intent = new Intent(this.getApplicationContext(),ThresholdProcessActivity.class);
             else
                 intent = new Intent(this.getApplicationContext(),ProcessImageActivity.class);

@@ -33,4 +33,6 @@ public interface CommandConstants {
     public static final String OpenCV_Gradient_X = "OpenCV-X方向梯度";
     public static final String OpenCV_Gradient_Y = "OpenCV-Y方向梯度";
     public static final String OpenCV_Gradient_XY = "OpenCV-XY方向梯度";
+    public static final String OpenCV_Canny_Edge = "OpenCV-Canny边缘";
+    public static final String OpenCV_Hough_LineDet = "OpenCV-霍夫直线检测";
 }
