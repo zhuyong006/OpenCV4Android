@@ -222,6 +222,10 @@ public class ProcessImageActivity extends AppCompatActivity implements View.OnCl
             bitmap = ImageProcessUtils.GradientImg(bitmap,1);
         else if(command.equals(OpenCV_Gradient_XY))
             bitmap = ImageProcessUtils.GradientImg(bitmap,2);
+        else if(command.equals(OpenCV_Template_Match)) {
+            Bitmap tpl = BitmapFactory.decodeResource(this.getResources(), R.drawable.tpl, options);
+            bitmap = ImageProcessUtils.TemplateMatch(tpl, bitmap);
+        }
 
         cost = System.currentTimeMillis() - cost;
         duration.setText("耗时" + Long.toString(cost) + "ms");

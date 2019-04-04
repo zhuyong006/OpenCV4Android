@@ -72,6 +72,8 @@ public class CommandData implements CommandConstants{
         cList.add(new CommandData(index++,OpenCV_Gradient_XY));
         cList.add(new CommandData(index++,OpenCV_Canny_Edge));
         cList.add(new CommandData(index++,OpenCV_Hough_LineDet));
+        cList.add(new CommandData(index++,OpenCV_Hough_CircleDet));
+        cList.add(new CommandData(index++,OpenCV_Template_Match));
         return cList;
     }
 }

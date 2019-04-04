@@ -194,6 +194,8 @@ public class ThresholdProcessActivity extends AppCompatActivity implements View.
             bitmap = ImageProcessUtils.CannyEdge(seek_value, bitmap);
         }else if(command.equals(OpenCV_Hough_LineDet)) {
             bitmap = ImageProcessUtils.HoughLineDet(seek_value, bitmap);
+        }else if(command.equals(OpenCV_Hough_CircleDet)) {
+            bitmap = ImageProcessUtils.HoughCircleDet(seek_value, bitmap);
         }
 
         cost = System.currentTimeMillis() - cost;

@@ -48,6 +48,7 @@ public class MenuActivity extends AppCompatActivity implements AdapterView.OnIte
                     || commandData.getCommand().equals(OpenCV_AdaptiveBinary)
                     || commandData.getCommand().equals(OpenCV_Canny_Edge)
                     || commandData.getCommand().equals(OpenCV_Hough_LineDet)
+                    || commandData.getCommand().equals(OpenCV_Hough_CircleDet)
             )
                 intent = new Intent(this.getApplicationContext(),ThresholdProcessActivity.class);
             else

@@ -501,4 +501,67 @@ public class ImageProcessUtils implements CommandConstants{
 
         return bitmap;
     }
+    public static Bitmap HoughCircleDet(int val,Bitmap bitmap) {
+
+
+        Mat src = new Mat();
+        Mat circles = new Mat();
+
+        Utils.bitmapToMat(bitmap, src);
+
+        Mat dst = new Mat(src.size(),src.type());
+        src.copyTo(dst);
+
+        if(val == 0)
+            val = 1;
+
+        Imgproc.GaussianBlur(src,src,new Size(3,3),0,0,Imgproc.BORDER_DEFAULT);
+        Imgproc.cvtColor(src,src,Imgproc.COLOR_BGR2GRAY);
+
+        //val：54 is the best for my img
+        Imgproc.HoughCircles(src,circles,Imgproc.CV_HOUGH_GRADIENT,1,10,val,80,15,80);
+        double[] circle = new double[3];
+        for(int i=0;i<circles.cols();i++)
+        {
+            circle = circles.get(0,i);
+            int a = (int)circle[0];
+            int b = (int)circle[1];
+            int r = (int)circle[2];
+
+            Core.circle(dst,new Point(a,b),r,new Scalar(255,0,0),2);
+        }
+
+        Utils.matToBitmap(dst, bitmap);
+        src.release();
+        circles.release();
+        dst.release();
+
+        return bitmap;
+    }
+    public static Bitmap TemplateMatch(Bitmap tpl,Bitmap src) {
+
+        Mat m_src = new Mat();
+        Mat m_tpl = new Mat();
+
+        Utils.bitmapToMat(src, m_src);
+        Utils.bitmapToMat(tpl, m_tpl);
+
+        int width = src.getWidth() - tpl.getWidth() + 1;
+        int height = src.getHeight() - tpl.getHeight() + 1;
+        Mat result = new Mat(width,height,CvType.CV_32FC1);
+
+        Imgproc.matchTemplate(m_src,m_tpl,result,Imgproc.TM_CCOEFF_NORMED);
+        Core.normalize(result,result,0,1,Core.NORM_MINMAX,-1);
+        Core.MinMaxLocResult match = Core.minMaxLoc(result);
+        Point pt1 = new Point(match.maxLoc.x,match.maxLoc.y);
+        Point pt2 = new Point(match.maxLoc.x + tpl.getWidth(),match.maxLoc.y + tpl.getHeight());
+
+        Core.rectangle(m_src,pt1,pt2,new Scalar(255,0,0),2);
+
+        Utils.matToBitmap(m_src, src);
+        m_src.release();
+        m_tpl.release();
+        result.release();
+        return src;
+    }
 }
