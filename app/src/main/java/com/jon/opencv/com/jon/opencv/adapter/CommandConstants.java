@@ -37,4 +37,6 @@ public interface CommandConstants {
     public static final String OpenCV_Hough_LineDet = "OpenCV-霍夫直线检测";
     public static final String OpenCV_Hough_CircleDet = "OpenCV-霍夫圆检测";
     public static final String OpenCV_Template_Match = "OpenCV-模板匹配";
+    public static final String OpenCV_Measure_Object = "OpenCV-对象测量";
+    public static final String OpenCV_Face_Dect = "OpenCV-人脸检测";
 }

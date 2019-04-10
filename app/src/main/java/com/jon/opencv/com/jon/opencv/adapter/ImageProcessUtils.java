@@ -7,11 +7,19 @@ import org.opencv.android.Utils;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfPoint;
+import org.opencv.core.MatOfPoint2f;
+import org.opencv.core.MatOfRect;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
+import org.opencv.imgproc.Moments;
+import org.opencv.objdetect.CascadeClassifier;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.opencv.core.CvType.CV_32F;
 import static org.opencv.core.CvType.CV_8U;
@@ -563,5 +571,60 @@ public class ImageProcessUtils implements CommandConstants{
         m_tpl.release();
         result.release();
         return src;
+    }
+    public static Bitmap MeasureObject(Bitmap bitmap) {
+
+        Mat src = new Mat();
+        Mat hierarchy = new Mat();
+        List<MatOfPoint> Counters = new ArrayList<MatOfPoint>();
+        Utils.bitmapToMat(bitmap, src);
+        Mat dst = new Mat(src.size(),src.type());
+
+        Imgproc.GaussianBlur(src,src,new Size(3,3),0);
+        Imgproc.cvtColor(src,src,Imgproc.COLOR_BGR2GRAY);
+        Imgproc.threshold(src,src,0,255,Imgproc.THRESH_BINARY | Imgproc.THRESH_OTSU);
+        Imgproc.findContours(src,Counters,hierarchy,Imgproc.RETR_EXTERNAL,Imgproc.CHAIN_APPROX_SIMPLE,new Point(0,0));
+        for(int i=0;i<Counters.size();i++)
+        {
+            Imgproc.drawContours(dst,Counters,i,new Scalar(255,0,0),2);
+            double area = Imgproc.contourArea(Counters.get(i));
+            double arcLength = Imgproc.arcLength(new MatOfPoint2f(Counters.get(i).toArray()),true);
+            Rect rect = Imgproc.boundingRect(Counters.get(i));
+            Core.rectangle(dst,new Point(rect.x,rect.y),new Point(rect.x+rect.width,rect.y+rect.height),new Scalar(0,255,0),2);
+            Log.e(TAG,"Area:"+area);
+            Log.e(TAG,"ArcLength:"+arcLength);
+            Moments moments = Imgproc.moments(Counters.get(i));
+            int x0 = (int)(moments.get_m10()/moments.get_m00());
+            int y0 = (int)(moments.get_m01()/moments.get_m00());
+            Core.circle(dst,new Point(x0,y0),3,new Scalar(0,0,255),-1);
+        }
+
+        Utils.matToBitmap(dst,bitmap);
+        src.release();
+        hierarchy.release();
+        dst.release();
+        return bitmap;
+    }
+    public static Bitmap FaceDect(CascadeClassifier cascade, Bitmap bitmap) {
+
+        Mat src = new Mat();
+        Mat dst = new Mat();
+        Utils.bitmapToMat(bitmap,src);
+        Utils.bitmapToMat(bitmap,dst);
+        Imgproc.cvtColor(src,src,Imgproc.COLOR_BGR2GRAY);
+        MatOfRect mRects = new MatOfRect();
+        cascade.detectMultiScale(src,mRects,1.1,3,0,new Size(10,10),new Size(0,0));
+        List<Rect> Rects= mRects.toList();
+        for(int i=0;i < Rects.size();i++)
+        {
+            Point pt1 = new Point(Rects.get(i).x,Rects.get(i).y);
+            Point pt2 = new Point(Rects.get(i).x+Rects.get(i).width,Rects.get(i).y+Rects.get(i).height);
+            Core.rectangle(dst,pt1,pt2,new Scalar(255,0,0),2);
+        }
+        Utils.matToBitmap(dst,bitmap);
+        src.release();
+        dst.release();
+        mRects.release();
+        return bitmap;
     }
 }

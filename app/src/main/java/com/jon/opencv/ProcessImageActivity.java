@@ -16,6 +16,8 @@ import com.jon.opencv.com.jon.opencv.adapter.CommandConstants;
 import com.jon.opencv.com.jon.opencv.adapter.ImageProcessUtils;
 
 import org.opencv.android.OpenCVLoader;
+import org.opencv.imgproc.Imgproc;
+import org.opencv.objdetect.CascadeClassifier;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -36,6 +38,7 @@ public class ProcessImageActivity extends AppCompatActivity implements View.OnCl
     private String command = null;
     private Bitmap bitmap = null;
     private File SavePicFile = null;
+    private CascadeClassifier cascade = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,6 +63,7 @@ public class ProcessImageActivity extends AppCompatActivity implements View.OnCl
         imageView = (ImageView)findViewById(R.id.imageView);
         initOpenCVLibs();
 
+        cascade = new CascadeClassifier("/data/haarcascade_eye_tree_eyeglasses.xml");
 
     }
 
@@ -226,7 +230,12 @@ public class ProcessImageActivity extends AppCompatActivity implements View.OnCl
             Bitmap tpl = BitmapFactory.decodeResource(this.getResources(), R.drawable.tpl, options);
             bitmap = ImageProcessUtils.TemplateMatch(tpl, bitmap);
         }
-
+        else if(command.equals(OpenCV_Measure_Object)) {
+            bitmap = ImageProcessUtils.MeasureObject(bitmap);
+        }
+        else if(command.equals(OpenCV_Face_Dect)) {
+            bitmap = ImageProcessUtils.FaceDect(cascade,bitmap);
+        }
         cost = System.currentTimeMillis() - cost;
         duration.setText("耗时" + Long.toString(cost) + "ms");
         imageView.setImageBitmap(bitmap);
